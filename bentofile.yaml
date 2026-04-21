@@ -1,0 +1,17 @@
+service: "service:EnergyPrediction" # Nom du fichier:Nom de la classe
+labels:
+  project: seattle_energy_efficiency
+  owner: axel
+include:
+  - "service.py"
+  - "schemas.py"
+python:
+  packages:
+    - scikit-learn
+    - xgboost
+    - pandas
+    - numpy
+    - pydantic
+models:
+  # BentoML ira chercher le modèle dans le store local constulable via la commande bentoml models list
+  - "grid_xgb_regressor:latest" 
