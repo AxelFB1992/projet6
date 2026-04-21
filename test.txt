@@ -1,0 +1,68 @@
+Test pour pour l'interface Web (Swagger) en format JSON (URL : http://localhost:3000/#/Service%20APIs/EnergyPrediction__predict) : 
+{
+  "YearBuilt": 1990,
+  "NumberofBuildings": 1,
+  "NumberofFloors": 10,
+  "PropertyGFABuilding(s)": 55000,
+  "PropertyGFAParking": 5000,
+  "Has_Steam": false,
+  "Has_Gas": true,
+  "Has_Electricity": true,
+  "LargestPropertyUseType": "Office",
+  "LargestPropertyUseTypeGFA": 50000,
+  "SecondLargestPropertyUseType": "Parking",
+  "SecondLargestPropertyUseTypeGFA": 5000,
+  "ThirdLargestPropertyUseType": null,
+  "ThirdLargestPropertyUseTypeGFA": 0,
+  "Neighborhood": "DOWNTOWN"
+}
+
+Test pour l'interface notebook (Jupyterlab) en format Python :
+test_data = {
+    "YearBuilt": 1990,
+    "NumberofBuildings": 1,
+    "NumberofFloors": 10,
+    "PropertyGFABuilding(s)": 55000,
+    "PropertyGFAParking": 5000,
+    "Has_Steam": False,
+    "Has_Gas": True,
+    "Has_Electricity": True,
+    "LargestPropertyUseType": "Office",
+    "LargestPropertyUseTypeGFA": 50000,
+    "SecondLargestPropertyUseType": "Parking",
+    "SecondLargestPropertyUseTypeGFA": 5000,
+    "ThirdLargestPropertyUseType": None,
+    "ThirdLargestPropertyUseTypeGFA": 0,
+    "Neighborhood": "DOWNTOWN"
+}
+
+Puis l'instruction qu'il faut executer pour se connecter au modèle et envoyer les informations pour prédictions :
+
+with bentoml.SyncHTTPClient("http://localhost:3000") as client:
+    result = client.predict(data=test_data)
+    print(f"Prédiction reçue : {result['estimated_consumption_kBtu']} kBtu")
+
+Test via la commande CURL en utilisant le terminal :
+curl -X 'POST' \
+  'http://localhost:3000/predict' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "data": {
+  "YearBuilt": 1990,
+  "NumberofBuildings": 1,
+  "NumberofFloors": 10,
+  "PropertyGFABuilding(s)": 55000,
+  "PropertyGFAParking": 5000,
+  "Has_Steam": false,
+  "Has_Gas": true,
+  "Has_Electricity": true,
+  "LargestPropertyUseType": "Office",
+  "LargestPropertyUseTypeGFA": 50000,
+  "SecondLargestPropertyUseType": "Parking",
+  "SecondLargestPropertyUseTypeGFA": 5000,
+  "ThirdLargestPropertyUseType": null,
+  "ThirdLargestPropertyUseTypeGFA": 0,
+  "Neighborhood": "DOWNTOWN"
+}
+  }'

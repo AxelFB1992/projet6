@@ -125,19 +125,31 @@ class EnergyPrediction:
             (data.ThirdLargestPropertyUseType, data.ThirdLargestPropertyUseTypeGFA)
         ]
 
+        #Ce bloc de code ne sera executé que si les champs LargestPropertyUseType, SecondLargestPropertyUseType et ThirdLargestPropertyUseType sont renseignés
+        #Chacun de ces champs deviendra tout à tour usage_enum grâce à la structure en triplet defini ci-dessus et la colonne 'usage'+'GFA' deviendra surface
+        #Si cette colonne n'est pas supérieure à 0, alors là aussi, rien ne sera renseignée dans les nouvelles colonnes prévues à cet effet
+        for usage_enum, surface in usages:
+            if usage_enum and surface > 0:
+                # On récupère la chaîne de caractères avec .value
+                usage_name = usage_enum.value 
+                category = self.mapping_usage.get(usage_name, 'Autre')
+                col_name = f'GFA_{category}'
+                if col_name in input_df.columns:
+                    input_df[col_name] += surface
+        '''
         for usage_name, surface in usages:
             if usage_name and surface > 0:
                 category = self.mapping_usage.get(usage_name, 'Autre')
                 col_name = f'GFA_{category}'
                 if col_name in input_df.columns:
                     input_df[col_name] += surface
-
+        '''
         # 6. Règle : Neighborhood (One Hot)
         col_nbhd = f'Nbhd_{data.Neighborhood.value}'
         if col_nbhd in input_df.columns:
             input_df[col_nbhd] = 1
         
-        # 7. On applique le scaling (très important !)
+        # 7. On applique le scaling (très important !) : En effet notre modèle s'applique sur des données scalés !
         input_df_scaled = self.scaler.transform(input_df)
         
         # 8. Prédiction normalisées(en log)
@@ -146,5 +158,5 @@ class EnergyPrediction:
         # 9. Retour à la valeur réelle
         final_predictions = np.expm1(log_pred[0])
 
-        # 10. On retourne la valeur finale à l'utilisateur
+        # 10. On retourne la valeur finale à l'utilisateur : C'est un dictionnaire que l'on retourne
         return {"predicted_consumption_kBtu": float(final_predictions)}
