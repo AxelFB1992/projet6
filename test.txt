@@ -66,3 +66,68 @@ curl -X 'POST' \
   "Neighborhood": "DOWNTOWN"
 }
   }'
+
+
+
+Pour la version cloud : 
+
+
+Test pour l'interface web : on va sur cet url : https://energy-service-325317112648.europe-west1.run.app/#/Service%20APIs/EnergyPrediction__predict
+
+Test pour le notebook (python) : 
+
+import bentoml
+
+# Remplace par ton URL Cloud réelle
+cloud_url = "https://energy-service-325317112648.europe-west1.run.app"
+
+# Initialisation du client distant
+client = bentoml.SyncHTTPClient(cloud_url)
+
+# Préparation des données (on utilise le format dictionnaire ici)
+input_data = {
+    "YearBuilt": 2000,
+    "NumberofBuildings": 1,
+    "NumberofFloors": 12,
+    "PropertyGFABuilding(s)": 85000,
+    "PropertyGFAParking": 10000,
+    "Has_Steam": False,
+    "Has_Gas": False,
+    "Has_Electricity": True,
+    "LargestPropertyUseType": "Office",
+    "LargestPropertyUseTypeGFA": 75000,
+    "Neighborhood": "DOWNTOWN"
+}
+
+# Appel de la prédiction
+# Note : Ici, BentoML gère l'encapsulation {"data": ...} automatiquement
+result = client.predict(data=input_data)
+
+print(f"Prédiction reçue du Cloud : {result}")
+
+
+Version curl : 
+
+curl -X 'POST' \
+  'https://energy-service-325317112648.europe-west1.run.app/predict' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "data": {
+      "YearBuilt": 1990,
+  "NumberofBuildings": 1,
+  "NumberofFloors": 10,
+  "PropertyGFABuilding(s)": 55000,
+  "PropertyGFAParking": 5000,
+  "Has_Steam": false,
+  "Has_Gas": true,
+  "Has_Electricity": true,
+  "LargestPropertyUseType": "Office",
+  "LargestPropertyUseTypeGFA": 50000,
+  "SecondLargestPropertyUseType": "Parking",
+  "SecondLargestPropertyUseTypeGFA": 5000,
+  "ThirdLargestPropertyUseType": null,
+  "ThirdLargestPropertyUseTypeGFA": 0,
+  "Neighborhood": "DOWNTOWN"
+    }
+  }'
